@@ -1,60 +1,66 @@
 using Microsoft.AspNetCore.Mvc;
-using BrugerService.DTO;
-using RabbitMQ.Client;
-using System.Text.Json;
-using System.Text;
-using Newtonsoft.Json;
-
+using BrugerServiceApi.Models;
+using BrugerServiceApi.Services;
 
 namespace BrugerServiceApi.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BrugerServiceController : ControllerBase
 {
     private readonly ILogger<BrugerServiceController> _logger;
 
-    private readonly string _dbPath;
-    private readonly string _hostingName;
+    private readonly UsersService _userService;
 
-    public BrugerServiceController(ILogger<BrugerServiceController> logger, IConfiguration config)
+    public BrugerServiceController(ILogger<BrugerServiceController> logger, IConfiguration config, UsersService userService)
     {
         _logger = logger;
-        _dbPath = config["DbPath"];
-        _hostingName = config["HostName"];
-
-        var hostName = System.Net.Dns.GetHostName();
-        var ips = System.Net.Dns.GetHostAddresses(hostName);
-        var _ipaddr = ips.First().MapToIPv4().ToString();
-        _logger.LogInformation(1, $"BrugerService responding from {_ipaddr}");
+        _userService = userService;
     }
 
-    // Post bruger
-    [HttpPost(Name = "PostBruger")]
-    public void Post([FromBody] UserDTO user)
+    // Get Rest API's
+    [HttpGet]
+    public async Task<List<User>> Get() 
+    {
+        return await _userService.GetAsync();
+    }   
+
+    // Get User by ID
+    [HttpGet("{id:length(24)}")]
+    public async Task<ActionResult<User>> Get(string id) 
+    {
+        var user = await _userService.GetAsync(id);
+
+        if (user == null) {
+            return NotFound();
+        }
+        return user;
+    }
+
+    // Post Rest API's
+    // Post User
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] User newUser)
     {
         // Log
-        _logger.LogInformation($"Method 'PostBruger' called with the values: {user.username} {user.givenName} {user.address} {user.birthDate} {user.email} {user.telephone}");
+        _logger.LogInformation($"Method 'PostBruger' called with the values: {newUser.username} {newUser.givenName} {newUser.address} {newUser.email} {newUser.telephone}");
 
-        // Create Connection to RabbitMQ Server
-        var factory = new ConnectionFactory { HostName = _hostingName };
-        using var connection = factory.CreateConnection();
+        await _userService.CreateAsync(newUser);
+        return CreatedAtAction(nameof(Get), new { userID = newUser.userID}, newUser);
+    }
 
-        // Using Connection to create Channel
-        using var channel = connection.CreateModel();
-        _logger.LogInformation($"Creating Queue using {factory.HostName}");
+    [HttpDelete("{id:length(24)}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var student = await _userService.GetAsync(id);
 
-        // Use channel to declare queue
-        channel.ExchangeDeclare(exchange: "BrugerService", type: ExchangeType.Topic);
+        if (student == null) {
+            return NotFound();
+        }
 
-        // Convert to Json
-        var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(user));
+        await _userService.DeleteAsync(student.userID!);
 
-        // Send Json Object
-        channel.BasicPublish(exchange: "BrugerService",
-                    routingKey: "KEY",
-                    basicProperties: null,
-                    body: body);
+        return NoContent();
     }
 }
 
