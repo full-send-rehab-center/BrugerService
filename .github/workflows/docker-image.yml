@@ -1,10 +1,10 @@
-name: Docker Image CI
+name: Docker Image Bruger
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main", "develop" ]
 
 jobs:
 
@@ -18,15 +18,14 @@ jobs:
       env: 
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: 
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD   
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD   
         
     - name: Build the Docker Image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      run: docker push ${DOCKER_USER}/<mit-repo-navn>:latest-dev 
+      run: docker build . --file ./BrugerServiceApi/Dockerfile --tag ${DOCKER_USER}/brugerservice:latest-dev 
       
     - name: Push image to Docker Hub
       env: 
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      run: docker push ${DOCKER_USER}/<mit-repo-navn>:latest-dev
+      run: docker push ${DOCKER_USER}/brugerservice:latest-dev
