@@ -33,7 +33,7 @@ public class BrugerServiceController : ControllerBase
     [HttpPost(Name = "PostBruger")]
     public void Post([FromBody] UserDTO user)
     {
-        // Log
+        // Log test
         _logger.LogInformation($"Method 'PostBruger' called with the values: {user.username} {user.givenName} {user.address} {user.birthDate} {user.email} {user.telephone}");
 
         // Create Connection to RabbitMQ Server
