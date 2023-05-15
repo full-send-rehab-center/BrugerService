@@ -20,10 +20,10 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD   
         
-    - name: Build the Docker Image
+    - name: Build the User Docker Image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      run: docker build . --file BrugerService/Dockerfile --tag ${DOCKER_USER}/brugerservice:latest-dev 
+      run: docker build . --file ./BrugerServiceApi/Dockerfile --tag ${DOCKER_USER}/brugerservice:latest-dev 
       
     - name: Push image to Docker Hub
       env: 
