@@ -12,26 +12,21 @@ public class BrugerServiceController : ControllerBase
 
     private readonly UsersService _userService;
 
-    private readonly string _dbPath;
-    private readonly string _hostingName;
-
     public BrugerServiceController(ILogger<BrugerServiceController> logger, IConfiguration config, UsersService userService)
     {
         _logger = logger;
-        _dbPath = config["DbPath"];
-        _hostingName = config["HostName"];
         _userService = userService;
-
-        var hostName = System.Net.Dns.GetHostName();
-        var ips = System.Net.Dns.GetHostAddresses(hostName);
-        var _ipaddr = ips.First().MapToIPv4().ToString();
-        _logger.LogInformation(1, $"BrugerService responding from {_ipaddr}");
-
-
     }
 
-    // Get User by ID
+    // Get Rest API's
     [HttpGet]
+    public async Task<List<User>> Get() 
+    {
+        return await _userService.GetAsync();
+    }   
+
+    // Get User by ID
+    [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<User>> Get(string id) 
     {
         var user = await _userService.GetAsync(id);
@@ -42,6 +37,7 @@ public class BrugerServiceController : ControllerBase
         return user;
     }
 
+    // Post Rest API's
     // Post User
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] User newUser)
@@ -51,6 +47,20 @@ public class BrugerServiceController : ControllerBase
 
         await _userService.CreateAsync(newUser);
         return CreatedAtAction(nameof(Get), new { userID = newUser.userID}, newUser);
+    }
+
+    [HttpDelete("{id:length(24)}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var student = await _userService.GetAsync(id);
+
+        if (student == null) {
+            return NotFound();
+        }
+
+        await _userService.DeleteAsync(student.userID!);
+
+        return NoContent();
     }
 }
 
