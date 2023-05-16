@@ -49,6 +49,8 @@ public class BrugerServiceController : ControllerBase
         return CreatedAtAction(nameof(Get), new { userID = newUser.userID}, newUser);
     }
 
+    // Delete Rest API'er
+    // Delete User by ID
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {
