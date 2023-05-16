@@ -7,11 +7,14 @@ services:
       - "5002:80"
     networks:
       - default
+    depends_on:
+      - mongodb
 
   mongodb:
     image: mongo
     ports:
       - "27017:27017"
+      - "7017:7017"
     networks:
       - default
 
