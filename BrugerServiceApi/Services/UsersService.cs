@@ -24,7 +24,7 @@ public class UsersService
     public async Task<User?> GetAsync(string id) =>
         await _usersCollection.Find(x => x.userID == id).FirstOrDefaultAsync();
 
-    // Post methods
+    // Post methodss
     // Post new User
     public async Task CreateAsync(User newUser) =>
         await _usersCollection.InsertOneAsync(newUser);
