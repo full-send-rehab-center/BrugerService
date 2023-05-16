@@ -4,18 +4,18 @@ services:
   user:
     image: rednecksinc/brugerservice:latest
     ports:
-      - "5001:80"
+      - "5002:80"
     networks:
-      - fleetnetwork
-    depends_on:
-      - mongodb
+      - default
 
   mongodb:
-    image: mongo:latest
+    image: mongo
     ports:
       - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
     networks:
-      - fleetnetwork
+      - default
 
   nginx:
     image: nginx:latest
@@ -26,30 +26,12 @@ services:
     ports:
       - "4000:4000"
     networks:
-      - fleetnetwork
-
-  loki:
-    image: grafana/loki
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - fleetnetwork
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    networks:
-      - fleetnetwork
-    volumes:
-      - grafana_data:/var/lib/grafana
+      - default
 
 networks:
-  fleetnetwork:
+  default:
     driver: bridge
-    external: true
 
 volumes:
+  mongodb_data:
   docs:
-  grafana_data:
