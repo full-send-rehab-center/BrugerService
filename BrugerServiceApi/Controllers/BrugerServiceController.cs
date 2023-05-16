@@ -12,13 +12,14 @@ public class BrugerServiceController : ControllerBase
 
     private readonly UsersService _userService;
 
-    public BrugerServiceController(ILogger<BrugerServiceController> logger, IConfiguration config, UsersService userService)
+    public BrugerServiceController(ILogger<BrugerServiceController> logger, UsersService userService)
     {
         _logger = logger;
         _userService = userService;
     }
 
     // Get Rest API's
+    // Get all Users
     [HttpGet]
     public async Task<List<User>> Get() 
     {
@@ -49,7 +50,25 @@ public class BrugerServiceController : ControllerBase
         return CreatedAtAction(nameof(Get), new { userID = newUser.userID}, newUser);
     }
 
-    // Delete Rest API'er
+    // Update Rest API's
+    // Update User by ID
+    [HttpPut("{id:length(24)}")]
+    public async Task<IActionResult> Update(string id, User updatedUser)
+    {
+        var user = await _userService.GetAsync(id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        updatedUser.userID = user.userID;
+
+        await _userService.UpdateAsync(id, updatedUser);
+        return NoContent();
+    }
+
+    // Delete Rest API's
     // Delete User by ID
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
