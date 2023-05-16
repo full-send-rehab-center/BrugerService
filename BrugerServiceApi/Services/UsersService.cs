@@ -7,8 +7,11 @@ namespace BrugerServiceApi.Services;
 public class UsersService
 {
     private readonly IMongoCollection<User> _usersCollection;
-    public UsersService(IOptions<UsersDbSettings> usersDbSettings)
+    private readonly string _connectionString;
+    public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config)
     {
+        _connectionString = config["mongodb://mongodb:27017"];
+        
         var mongoClient = new MongoClient(usersDbSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(usersDbSettings.Value.DatabaseName);

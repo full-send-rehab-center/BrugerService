@@ -7,6 +7,11 @@ services:
       - "5002:80"
     networks:
       - default
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - CollectionName=Users
+      - ConnectionString=mongodb://mongodb:27017
+      - DatabaseName=UsersDb
     depends_on:
       - mongodb
 

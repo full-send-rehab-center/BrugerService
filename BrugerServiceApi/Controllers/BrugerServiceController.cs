@@ -12,6 +12,8 @@ public class BrugerServiceController : ControllerBase
 
     private readonly UsersService _userService;
 
+    // private readonly string _connectionString;
+
     public BrugerServiceController(ILogger<BrugerServiceController> logger, UsersService userService)
     {
         _logger = logger;
