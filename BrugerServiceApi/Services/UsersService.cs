@@ -34,7 +34,7 @@ public class UsersService
     public async Task UpdateAsync(string id, User updatedUser) =>
         await _usersCollection.ReplaceOneAsync(x => x.userID == id, updatedUser);
 
-    // Delete method
+    // Delete methods
     // Delete User by ID
     public async Task DeleteAsync(string id) =>
         await _usersCollection.DeleteOneAsync(x => x.userID == id);
