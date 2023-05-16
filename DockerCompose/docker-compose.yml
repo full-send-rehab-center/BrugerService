@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   user:
-    image: rednecksinc/brugerservice:latest
+    image: rednecksinc/min-service:latest
     ports:
       - "5002:80"
     networks:

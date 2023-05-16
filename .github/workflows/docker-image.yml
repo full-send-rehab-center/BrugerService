@@ -2,6 +2,8 @@ name: Docker Image Bruger
 
 on:
   push:
+    paths:
+      - 'BrugerServiceApi/**'
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
