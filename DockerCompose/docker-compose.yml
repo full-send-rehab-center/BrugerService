@@ -9,14 +9,15 @@ services:
       - default
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - collectionName="Users"
-      - connectionString="mongodb://mongodb:27018"
-      - databaseName="UsersDb"
+      - CollectionName=Users
+      - ConnectionString=mongodb://brugerdb:27017
+      - DatabaseName=UsersDb
     depends_on:
-      - mongodb
+      - brugerdb
 
-  mongodb:
-    image: mongo
+  brugerdb:
+    container_name: brugerdb
+    image: mongo:latest
     ports:
       - "27018:27017"
     networks:

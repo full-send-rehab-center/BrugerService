@@ -11,10 +11,10 @@ public class UsersService
     private readonly string _databaseName;
     private readonly string _collectionName;
     public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config)
-    {
-        _connectionString = config["connectionString"];
-        _databaseName = config["databaseName"];
-        _collectionName = config["collectionName"];
+    {        
+        _collectionName = config["CollectionName"];
+        _connectionString = config["ConnectionString"];
+        _databaseName = config["DatabaseName"];
 
         var mongoClient = new MongoClient(_connectionString);
         var mongoDatabase = mongoClient.GetDatabase(_databaseName);
