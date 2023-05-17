@@ -7,14 +7,19 @@ services:
       - "5002:80"
     networks:
       - default
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - CollectionName=Users
+      - ConnectionString=mongodb://brugerdb:27017
+      - DatabaseName=UsersDb
     depends_on:
-      - mongodb
+      - brugerdb
 
-  mongodb:
-    image: mongo
+  brugerdb:
+    container_name: brugerdb
+    image: mongo:latest
     ports:
-      - "27017:27017"
-      - "7017:7017"
+      - "27018:27017"
     networks:
       - default
 

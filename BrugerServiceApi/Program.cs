@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<UsersDbSettings>(
-    builder.Configuration.GetSection("UserDbSettings"));
+    builder.Configuration.GetSection("UsersDbSettings"));
 
 builder.Services.AddSingleton<UsersService>();
 

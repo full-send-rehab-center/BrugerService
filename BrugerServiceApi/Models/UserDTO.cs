@@ -11,6 +11,7 @@ public class User
 
     public string? username {get; set;}
     public string? password {get; set;}
+    public string? role {get; set;}
     [BsonElement("Name")]
     public string? givenName {get; set;}
     public string? address {get; set;}
