@@ -8,18 +8,23 @@ public class UsersService
 {
     private readonly IMongoCollection<User> _usersCollection;
     private readonly string _connectionString;
-    private readonly string _collectionName;
     private readonly string _databaseName;
-
+    private readonly string _collectionName;
     public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config)
     {
-        _connectionString = config["mongodb://mongodb:27017"];
-        
+        _connectionString = config["connectionString"];
+        _databaseName = config["databaseName"];
+        _collectionName = config["collectionName"];
         var mongoClient = new MongoClient(_connectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(_databaseName);
 
         _usersCollection = mongoDatabase.GetCollection<User>(_collectionName);
+        // var mongoClient = new MongoClient(usersDbSettings.Value.ConnectionString);
+
+        // var mongoDatabase = mongoClient.GetDatabase(usersDbSettings.Value.DatabaseName);
+
+        // _usersCollection = mongoDatabase.GetCollection<User>(usersDbSettings.Value.CollectionName);
     }
 
     // Get methods
