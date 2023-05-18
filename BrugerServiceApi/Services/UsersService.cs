@@ -19,10 +19,6 @@ public class UsersService
         var mongoClient = new MongoClient(_connectionString);
         var mongoDatabase = mongoClient.GetDatabase(_databaseName);
         _usersCollection = mongoDatabase.GetCollection<User>(_collectionName);
-
-        // var mongoClient = new MongoClient(usersDbSettings.Value.ConnectionString);
-        // var mongoDatabase = mongoClient.GetDatabase(usersDbSettings.Value.DatabaseName);
-        // _usersCollection = mongoDatabase.GetCollection<User>(usersDbSettings.Value.CollectionName);
     }
 
     // Get methods
