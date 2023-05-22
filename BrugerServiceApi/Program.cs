@@ -14,6 +14,7 @@ builder.Services.Configure<UsersDbSettings>(
     builder.Configuration.GetSection("UsersDbSettings"));
 
 builder.Services.AddSingleton<UsersService>();
+builder.Services.AddSingleton<HashingService>();
 
 var app = builder.Build();
 

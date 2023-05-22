@@ -65,7 +65,7 @@ public class BrugerServiceController : ControllerBase
         updatedUser.userID = user.userID;
 
         await _userService.UpdateAsync(id, updatedUser);
-        return NoContent();
+        return Ok();
     }
 
     // Delete Rest API's
@@ -81,7 +81,7 @@ public class BrugerServiceController : ControllerBase
 
         await _userService.DeleteAsync(student.userID!);
 
-        return NoContent();
+        return Ok();
     }
 }
 
