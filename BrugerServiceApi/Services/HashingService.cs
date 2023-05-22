@@ -29,15 +29,5 @@ public class HashingService
             numBytesRequested: 256 / 8));
 
         return hashed;
-
-
-        // int iterations = 1000;
-        // int hashByteSize = 32;
-
-        // using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations))
-        // {
-        //     pbkdf2.IterationCount = iterations;
-        //     return pbkdf2.GetBytes(hashByteSize);
-        // }
     }
 }
