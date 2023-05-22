@@ -40,9 +40,10 @@ public class UsersService
     // Post new User
     public async Task CreateAsync(User newUser)
     {
-        byte[] salt = _hashingService.CreateSalt();
-        byte[] _hashedPassword = _hashingService.HashPassword(newUser.haskedPassword, salt);
-        newUser.haskedPassword = _hashedPassword;
+        string _salt = _hashingService.CreateSalt();
+        string _hashedPassword = _hashingService.HashPassword(newUser.password, _salt);
+        newUser.password = _hashedPassword;
+        newUser.salt = _salt;
         await _usersCollection.InsertOneAsync(newUser);
     }
 

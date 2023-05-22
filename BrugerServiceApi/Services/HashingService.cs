@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
@@ -7,25 +8,36 @@ namespace BrugerServiceApi.Services;
 
 public class HashingService
 {
-    public byte[] CreateSalt ()   
+    public string CreateSalt ()   
     {
-        byte[] salt = new byte[16];
-        using (var randomGenerator = new RNGCryptoServiceProvider())
+        byte[] saltBytes = new byte[128 / 8];
+        using (var rng = RandomNumberGenerator.Create())
         {
-            randomGenerator.GetBytes(salt);
+            rng.GetNonZeroBytes(saltBytes);
         }
+        string salt = Convert.ToBase64String(saltBytes);
         return salt;
     }
 
-    public byte[] HashPassword(byte[] password, byte[] salt)
+    public string HashPassword(string password, string salt)
     {
-        int iterations = 1000;
-        int hashByteSize = 32;
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: Convert.FromBase64String(salt),
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
 
-        using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations))
-        {
-            pbkdf2.IterationCount = iterations;
-            return pbkdf2.GetBytes(hashByteSize);
-        }
+        return hashed;
+
+
+        // int iterations = 1000;
+        // int hashByteSize = 32;
+
+        // using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations))
+        // {
+        //     pbkdf2.IterationCount = iterations;
+        //     return pbkdf2.GetBytes(hashByteSize);
+        // }
     }
 }

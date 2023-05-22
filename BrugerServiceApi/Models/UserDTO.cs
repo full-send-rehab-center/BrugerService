@@ -10,8 +10,8 @@ public class User
     public string? userID {get; set;}
 
     public string? username {get; set;}
-    public byte[]? haskedPassword {get; set;}
-    public byte[]? salt {get; set;}
+    public string? password {get; set;}
+    public string? salt {get; set;}
     public string? role {get; set;}
     [BsonElement("Name")]
     public string? givenName {get; set;}
