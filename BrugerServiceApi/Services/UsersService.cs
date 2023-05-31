@@ -28,9 +28,8 @@ public class UsersService : IUsersService
     private readonly string _collectionName;
     private IConfiguration _config;
 
-    public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config)
+    public UsersService(IConfiguration config)
     {
-
         _config = config;
 
         _collectionName = config["CollectionName"];
