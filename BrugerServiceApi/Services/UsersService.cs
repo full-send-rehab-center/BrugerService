@@ -2,25 +2,40 @@ using BrugerServiceApi.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Text;
 
+using Microsoft.AspNetCore.Mvc;
+
 namespace BrugerServiceApi.Services;
 
-public class UsersService
+public interface IUsersService
+{
+    Task<User> CreateAsync(User newUser);
+    Task DeleteAsync(string id);
+    Task<List<User>> GetAsync();
+    Task<User?> GetAsync(string id);
+    Task UpdateAsync(string id, User updatedUser);
+}
+
+
+public class UsersService : IUsersService
 {
     private readonly IMongoCollection<User> _usersCollection;
     private readonly string _connectionString;
     private readonly string _databaseName;
     private readonly string _collectionName;
-    private readonly HashingService _hashingService;
-    public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config, HashingService hashingService)
+    private IConfiguration _config;
+
+    public UsersService(IOptions<UsersDbSettings> usersDbSettings, IConfiguration config)
     {
+
+        _config = config;
+
         _collectionName = config["CollectionName"];
         _connectionString = config["ConnectionString"];
         _databaseName = config["DatabaseName"];
-
-        _hashingService = hashingService;
 
         var mongoClient = new MongoClient(_connectionString);
         var mongoDatabase = mongoClient.GetDatabase(_databaseName);
@@ -38,13 +53,14 @@ public class UsersService
 
     // Post methodss
     // Post new User
-    public async Task CreateAsync(User newUser)
+    public async Task<User?> CreateAsync(User newUser)
     {
-        string _salt = _hashingService.CreateSalt();
-        string _hashedPassword = _hashingService.HashPassword(newUser.password, _salt);
+        string _salt = CreateSalt();
+        string _hashedPassword = HashPassword(newUser.password, _salt);
         newUser.password = _hashedPassword;
         newUser.salt = _salt;
         await _usersCollection.InsertOneAsync(newUser);
+        return newUser;
     }
 
     // Update methods
@@ -56,4 +72,30 @@ public class UsersService
     // Delete User by ID
     public async Task DeleteAsync(string id) =>
         await _usersCollection.DeleteOneAsync(x => x.userID == id);
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Hashing and Salt methods
+    public string CreateSalt ()   
+    {
+        byte[] saltBytes = new byte[128 / 8];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetNonZeroBytes(saltBytes);
+        }
+        string salt = Convert.ToBase64String(saltBytes);
+        return salt;
+    }
+
+    public string HashPassword(string password, string salt)
+    {
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: password,
+            salt: Convert.FromBase64String(salt),
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 10000,
+            numBytesRequested: 256 / 8));
+
+        return hashed;
+    }
 }

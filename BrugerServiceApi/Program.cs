@@ -13,8 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<UsersDbSettings>(
     builder.Configuration.GetSection("UsersDbSettings"));
 
-builder.Services.AddSingleton<UsersService>();
-builder.Services.AddSingleton<HashingService>();
+builder.Services.AddSingleton<IUsersService, UsersService>();
 
 var app = builder.Build();
 
